@@ -27,17 +27,21 @@ const getplayer = (number) => {
     }
 const getPlayerCellValue = (player, cellNumber) => $(`#player-${player}-${cellNumber}`);
 const setCellHTML = (player, cellNumber, value) => $(`#player-${player}-${cellNumber}`).html(value);
+const setTotalHTML = (player, cellNumber, value) => $(`#total_player-${player}-${cellNumber}`).html(value);
+const getTotalValueHTML = (player, cellNumber) => $(`#total_player-${player}-${cellNumber}`).html();
 
 const addpoint = (element) => {
     const player = element.dataset.parameter;
     const value = $("#pins-" + player).val();
     let frameNumber;
+    let sumPrev = 0;
 
     for (let i = 1; i <= 16; i++) {
-        const td = $("#player-" + player + "-" + i);
-        const prevTd  = getPlayerCellValue(player, i - 1);
-        const nextTd1 = getPlayerCellValue(player, i + 1);
-        const nextTd2 = getPlayerCellValue(player, i + 2);
+        let td = $("#player-" + player + "-" + i);
+        let prevTd  = getPlayerCellValue(player, i - 1);
+        let prevTd2 = getPlayerCellValue(player, i - 2);
+        let nextTd1 = getPlayerCellValue(player, i + 1);
+        let nextTd2 = getPlayerCellValue(player, i + 2);
 
         // Détermination du numéro de Frame
         switch (true) {
@@ -58,29 +62,58 @@ const addpoint = (element) => {
         }
 
         $("#frame_number-" + player).val(frameNumber);
-        $("#start_number-" + player).val(i+1)
+        $("#start_number-" + player).val(i+1 == 17 ? 'Jeu terminé' : i+1)
 
         // Traitement des cellules
         if (td.html() === "") {
-            if ((typeof prevTd.html() === 'undefined' || prevTd.html() === "  ") && value == 15) {
+            if (value == 15 && i % 3 == 1) {
                 td.html('X');
+            }else if(value == 15 && frameNumber == 5){
+                td.html('X')
             } else {
                 td.html(value);
             }
 
-            const sum = parseInt(td.html()) + parseInt(prevTd.html());
-            if (!isNaN(sum) && sum === 15 && nextTd2.length && i % 3 != 1) {
+            let sumPrevTd = (typeof prevTd2.html() !== 'undefined' &&
+                                prevTd2.html() != "  " && prevTd2.html() != "/") ?
+                                    parseInt(prevTd.html()) + parseInt(prevTd2.html()) :
+                                    parseInt(prevTd.html())
+
+            let sum = parseInt(td.html()) + sumPrevTd;
+
+
+            if (!isNaN(sum) && sum === 15 && nextTd2.length && i % 3 != 1 && frameNumber != 5) {
                 td.html('/');
-                if(i < 13 )
+                if(i < 13 && i % 3 == 2)
                     nextTd1.html("  ");
             }
 
-            if (td.html() === 'X' && nextTd1.length && nextTd2.length && i < 13 ) {
+            if (td.html() === 'X' && nextTd1.length && nextTd2.length && i < 13 && frameNumber != 5) {
                 nextTd1.html("  ");
                 nextTd2.html("  ");
             }
+            if (i % 3 == 0) {
+               sumPrev = sum
+            }else if(sum == 15){
+                sumPrev = 15
+            }
 
+            if (i % 3 == 0)
+                getTotalFrame(sumPrev,frameNumber,player)
             break; // Sortir de la boucle après avoir traité une cellule
         }
     }
+    $("#pins-" + player).val('')
 };
+
+const getTotalFrame = (sumPrev,frameNumber,player) => {
+
+    total1 = parseInt(getTotalValueHTML(player,frameNumber - 2))
+    sum = (frameNumber -1 != 1) ?
+            sumPrev + total1:
+            sumPrev;
+
+    if(!isNaN(sum) && sum != 0)
+        setTotalHTML(player, frameNumber -1,sum);
+
+}
