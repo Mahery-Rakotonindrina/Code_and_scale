@@ -1,16 +1,30 @@
-$(document).ready(
+$(document).ready(function() {
+    $(document).on('keyup', 'input[id^="pins-"]', function(){
+        let value = parseInt(this.value);
+        if (value > 15) {
+                Toastify({
+                    text: "Vous ne pouvez pas saisir un nombre supérieur à 15.",
+                    duration:3000, // Durée d'affichage en millisecondes
+                    gravity: "top", // Position du toast (top, bottom, center)
+                    backgroundColor: "linear-gradient(to right, #FF5733, #C70039)", // Couleur de fond
+                }).showToast();
+            // Si la valeur est supérieure à 15, réinitialiser à 15
+            this.value = 15;
+        }
+
+    });
 
     $(document).on('click','#load_player', function(){
         let player = $("#player").val();
         getplayer(player);
-    })
+    });
 
-
-)
-$.ajaxSetup({
-    headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    }
+    // Configuration globale de jQuery AJAX
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
 });
 
 const getplayer = (number) => {
@@ -80,7 +94,16 @@ const addpoint = (element) => {
                                     parseInt(prevTd.html())
 
             let sum = parseInt(td.html()) + sumPrevTd;
-
+            if(sum > 15){
+                Toastify({
+                    text: "Il ne devrait pas y avoir plus de 15 quilles touchées dans une Frame.",
+                    duration:3000,
+                    gravity: "top",
+                    backgroundColor: "linear-gradient(to right, #FF5733, #C70039)",
+                }).showToast();
+                td.html('')
+                return true
+            }
 
             if (!isNaN(sum) && sum === 15 && nextTd2.length && i % 3 != 1 && frameNumber != 5) {
                 td.html('/');

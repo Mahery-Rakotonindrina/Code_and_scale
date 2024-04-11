@@ -11,6 +11,9 @@
     <script src="JS/jquery-3.7.1.min.js"></script>
     <script src="JS/script.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
     <title>code & scale test</title>
 </head>
 <body>
