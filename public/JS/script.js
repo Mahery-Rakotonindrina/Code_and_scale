@@ -94,6 +94,7 @@ const addPoint = (element) => {
 
             let sum = parseInt(td.html()) + sumPrevTd;
 
+
             if (!isNaN(sum) && sum === 15 &&
                     i % 3 != 1
                     && frameNumber != 5) {
@@ -111,16 +112,16 @@ const addPoint = (element) => {
                 frameNumber = frameNumber+1
             }
             let array_value = []
+            console.log(i)
             if(i%3 == 0){
                 array_value = [prevTd2.html(),prevTd.html(),td.html()]
                 const spare = '/';
                 const strike = 'X';
-                if(array_value.includes(spare)){
-                    getTotalFrameWithSpare(array_value,frameNumber,player)
-                }else if (array_value.includes(strike)){
-                    getTotalFrameWithStrike(array_value,frameNumber,player)
-                }else{
-                    getTotalFrameNormal(array_value,frameNumber,player)
+                console.log(array_value);
+                if (array_value.includes(spare) || array_value.includes(strike)) {
+                    getTotalFrameWithStyle(array_value, frameNumber, player);
+                } else {
+                    getTotalFrameNormal(array_value, frameNumber, player);
                 }
             }
 
@@ -168,19 +169,7 @@ const getTotalFrameNormal = (frame,frameNumber,player) => {
     }
 }
 
-const getTotalFrameWithStrike = (frame,frameNumber,player) => {
-    let sum = 15
-    let total1 = parseInt(getTotalValueHTML(player,frameNumber - 2))
-    if(!isNaN(total1)){
-        sum = (frameNumber -1 != 1) ?
-            sum + total1:
-            sum;
-    }
-    if(!isNaN(sum) && sum != 0)
-    setTotalHTML(player, frameNumber -1,sum);
-}
-
-const getTotalFrameWithSpare = (frame,frameNumber,player) => {
+const getTotalFrameWithStyle = (frame,frameNumber,player) => {
     let sum = 15
     let total1 = parseInt(getTotalValueHTML(player,frameNumber - 2))
     if(!isNaN(total1)){
