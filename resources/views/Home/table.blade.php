@@ -28,7 +28,7 @@
             <input type="text" class="form-control" id="pins-{{ $i }}" value="">
         </div>
         <div class="col-sm-3">
-            <btn class="btn btn-success" id="add_point" onclick="addpoint(this)" data-parameter="{{ $i }}">Ajouter</btn>
+            <btn class="btn btn-success" id="add_point" onclick="addPoint(this)" data-parameter="{{ $i }}">Ajouter</btn>
         </div>
     </div>
     <table class="table table-bordered table-hover mt-4 col-sm-5" style="border-color: green;" id="table-{{ $i }}">
@@ -42,7 +42,7 @@
         </thead>
         <tbody>
             @for ($j = 1; $j <= 18; $j++)
-                <td id="player-{{ $i }}-{{ $j }}" class="fixed-column center text-center"></td>
+                <td id="player-{{ $i }}-{{ $j }}" class="fixed-column center text-center" data-value=""></td>
             @endfor
         </tbody>
         <tfoot class="center text-center">
