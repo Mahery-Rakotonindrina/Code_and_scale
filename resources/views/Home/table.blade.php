@@ -46,11 +46,11 @@
             @endfor
         </tbody>
         <tfoot class="center text-center">
-            <td colspan="3" id="total_player-{{ $i }}-1"></td>
-            <td colspan="3" id="total_player-{{ $i }}-2"></td>
-            <td colspan="3" id="total_player-{{ $i }}-3"></td>
-            <td colspan="3" id="total_player-{{ $i }}-4"></td>
-            <td colspan="4" id="total_player-{{ $i }}-5"></td>
+            @for ($k = 1; $k <= 4; $k++)
+                <td colspan="3" id="total_player-{{ $i }}-{{ $k }}" data-frame=""></td>
+
+            @endfor
+            <td colspan="4" id="total_player-{{ $i }}-5" data-frame=""></td>
             <td colspan="2"></td>
         </tfoot>
     </table>

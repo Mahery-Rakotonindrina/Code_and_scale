@@ -111,23 +111,27 @@ const addPoint = (element) => {
                 i = i +2
                 frameNumber = frameNumber+1
             }
-            let array_value = []
-            console.log(i)
-            if(i%3 == 0){
-                array_value = [prevTd2.html(),prevTd.html(),td.html()]
-                const spare = '/';
-                const strike = 'X';
-                console.log(array_value);
-                if (array_value.includes(spare) || array_value.includes(strike)) {
-                    getTotalFrameWithStyle(array_value, frameNumber, player);
-                } else {
-                    getTotalFrameNormal(array_value, frameNumber, player);
-                }
-            }
 
             if(frameNumber == 5){
                 td.attr('data-value', value);
             }
+
+            let array_value = []
+            if(i%3 == 0){
+                array_value = [prevTd2.html(),prevTd.html(),td.html()]
+                const spare = '/';
+                const strike = 'X';
+                if (array_value.includes(spare) || array_value.includes(strike)) {
+                    if( array_value.includes(strike)) array_value = ['X','','']
+                    getTotalFrameWithStyle(array_value, frameNumber, player);
+                } else {
+                    getTotalFrameNormal(array_value, frameNumber, player);
+                }
+                $(`#total_player-${player}-${frameNumber - 1}`).attr('data-frame', JSON.stringify(array_value));
+                getBonusPoint(player,frameNumber)
+            }
+
+            // if(i%3 == 0)
             break; // Sortir de la boucle après avoir traité une cellule
         }
     }
@@ -135,7 +139,6 @@ const addPoint = (element) => {
         let val = getPlayerCellValue(player,j)
         val = val.html()
         array.push(parseInt(val))
-
         let searchStrike = 'X';
         let index = array.indexOf(searchStrike);
 
@@ -181,14 +184,41 @@ const getTotalFrameWithStyle = (frame,frameNumber,player) => {
     setTotalHTML(player, frameNumber -1,sum);
 }
 
-const getTotalFrame = (sumPrev,frameNumber,player) => {
+const getBonusPoint = (player, frameNumber) => {
+    let frames = $(`#total_player-${player}-${frameNumber - 1}`).attr('data-frame');
+    let frames1 = $(`#total_player-${player}-${frameNumber - 2}`).attr('data-frame');
+    let totalframe1 = $(`#total_player-${player}-${frameNumber - 2}`).html();
+    let totalStrike;
+    let totalSpare;
 
-    total1 = parseInt(getTotalValueHTML(player,frameNumber - 2))
-    sum = (frameNumber -1 != 1) ?
-            sumPrev + total1:
-            sumPrev;
+    // Vérifiez si frames1 est défini avant de l'utiliser
+    if (frames1 !== undefined && frames1.includes('X')) {
+        let result = JSON.parse(frames);
+        let result1 = JSON.parse(frames1);
+        let cell4;
 
-    if(!isNaN(sum) && sum != 0)
-        setTotalHTML(player, frameNumber -1,sum);
+        if (result.includes('X')) {
+            let index = result.indexOf('X');
+            if (index !== -1) {
+                let newVal = 15;
+                result[index] = newVal;
+            }
+        }
 
+        cell4 = frameNumber == 5 ?
+            parseInt(result[3]):
+            0;
+
+        totalStrike = parseInt(totalframe1) + parseInt(result[0]) + parseInt(result[1]) + parseInt(result[2]);
+        console.log(totalStrike);
+        result1 = totalStrike + parseInt(result[0]) + parseInt(result[1]) + parseInt(result[2]);
+        setTotalHTML(player, frameNumber - 2, totalStrike);
+        setTotalHTML(player, frameNumber - 1, result1);
+    } else if (frames1 && frames1.includes('/')) { // Vérifiez si frames1 est défini et s'il contient '/'
+        totalSpare = parseInt(totalframe1) + parseInt(result[0]) + parseInt(result[1]);
+        result1 = totalSpare + parseInt(result[0]) + parseInt(result[1]) + parseInt(result[2]);
+        setTotalHTML(player, frameNumber - 2, totalSpare);
+        setTotalHTML(player, frameNumber - 1, result1);
+    }
 }
+
