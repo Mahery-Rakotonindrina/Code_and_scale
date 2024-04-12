@@ -1,8 +1,9 @@
+const totalPins = 15
 $(document).ready(function() {
     $(document).on('keyup', 'input[id^="pins-"]', function(){
         this.value = this.value.replace(/\D/g, '');
         let value = parseInt(this.value);
-        if (value > 15) {
+        if (value > totalPins) {
                 Toastify({
                     text: "Vous ne pouvez pas saisir un nombre supérieur à 15.",
                     duration:3000,
@@ -10,7 +11,7 @@ $(document).ready(function() {
                     backgroundColor: "linear-gradient(to right, #FF5733, #C70039)",
                 }).showToast();
             // Si la valeur est supérieure à 15, réinitialiser à 15
-            this.value = 15;
+            this.value = totalPins;
         }
 
     });
@@ -80,8 +81,8 @@ const addPoint = (element) => {
 
         // Traitement des cellules
         if (td.html() === "") {
-            if ((value == 15 && i % 3 == 1) ||
-                (value == 15 && frameNumber == 5)) {
+            if ((value == totalPins && i % 3 == 1) ||
+                (value == totalPins && frameNumber == 5)) {
                 td.html('X');
             } else {
                 td.html(value);
@@ -95,7 +96,7 @@ const addPoint = (element) => {
             let sum = parseInt(td.html()) + sumPrevTd;
 
 
-            if (!isNaN(sum) && sum === 15 &&
+            if (!isNaN(sum) && sum === totalPins &&
                     i % 3 != 1
                     && frameNumber != 5) {
                 td.html('/');
@@ -122,7 +123,6 @@ const addPoint = (element) => {
                 const spare = '/';
                 const strike = 'X';
                 if (array_value.includes(spare) || array_value.includes(strike)) {
-                    if( array_value.includes(strike)) array_value = ['X','','']
                     getTotalFrameWithStyle(array_value, frameNumber, player);
                 } else {
                     getTotalFrameNormal(array_value, frameNumber, player);
@@ -145,7 +145,7 @@ const addPoint = (element) => {
         // Vérifier si la valeur a été trouvée
         if (index !== -1) {
             // Remplacer la valeur dans l'array
-            let newVal = 15;
+            let newVal = totalPins;
             array[index] = newVal;
         }
 
@@ -167,13 +167,23 @@ const getTotalFrameNormal = (frame,frameNumber,player) => {
     sum = (frameNumber -1 != 1) ?
             sum + total1:
             sum;
+
+    if(frameNumber == 5) setTotalHTML(player, frameNumber,sum);
     if(!isNaN(sum) && sum != 0){
             setTotalHTML(player, frameNumber -1,sum);
     }
 }
 
 const getTotalFrameWithStyle = (frame,frameNumber,player) => {
-    let sum = 15
+    if(frameNumber == 5) {
+        let searchStrike = 'X';
+        let index = frame.indexOf(searchStrike);
+        if (index !== -1) {
+            frame[index] =totalPins ;
+            getTotalFrameNormal(frame,frameNumber,player)
+        }
+    }
+    let sum = totalPins
     let total1 = parseInt(getTotalValueHTML(player,frameNumber - 2))
     if(!isNaN(total1)){
         sum = (frameNumber -1 != 1) ?
@@ -200,7 +210,7 @@ const getBonusPoint = (player, frameNumber) => {
         if (result.includes('X')) {
             let index = result.indexOf('X');
             if (index !== -1) {
-                let newVal = 15;
+                let newVal = totalPins;
                 result[index] = newVal;
             }
         }
@@ -210,7 +220,6 @@ const getBonusPoint = (player, frameNumber) => {
             0;
 
         totalStrike = parseInt(totalframe1) + parseInt(result[0]) + parseInt(result[1]) + parseInt(result[2]);
-        console.log(totalStrike);
         result1 = totalStrike + parseInt(result[0]) + parseInt(result[1]) + parseInt(result[2]);
         setTotalHTML(player, frameNumber - 2, totalStrike);
         setTotalHTML(player, frameNumber - 1, result1);
